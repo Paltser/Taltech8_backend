@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import {Toode} from "../models/Toode";
+import { Toode } from "../models/Toode";
 
 const router: Router = Router();
 
@@ -15,24 +15,12 @@ router.get("/tooted", (req: Request, res: Response) => {
     res.send(tooted)
 });
 
-router.post("/lisa-toode", (req: Request, res: Response) => {
-    if (/^[0-9]+$/.test(req.body.id) && /^[0-9]+$/.test(req.body.price)) {
-        const newToode = new Toode(req.body.id, req.body.name, req.body.price, req.body.isActive);
-        tooted.push(newToode);
-        res.status(200).json(tooted);
-    } else {
-        res.status(400).json({ message: "Invalid request body" });
-    }
-});
 router.delete("/kustuta-toode/:index", (req: Request, res: Response) => {
     if (/^[0-9]+$/.test(req.params.index)) {
         tooted.splice(Number(req.params.index),1)
-        res.send(tooted)
-    } else {
-        res.status(400).json({error: "Invalid index"})
     }
+    res.send(tooted)
 });
-
 
 router.delete("/kustuta-toode-variant2/:index", (req: Request, res: Response) => {
     if (/^[0-9]+$/.test(req.params.index)) {
@@ -43,18 +31,54 @@ router.delete("/kustuta-toode-variant2/:index", (req: Request, res: Response) =>
     }
 });
 
-
+router.post("/lisa-toode", (req: Request, res: Response) => {
+    if (/^[0-9]+$/.test(req.body.id) && /^[0-9]+$/.test(req.body.price)) {
+        tooted.push(
+            new Toode(req.body.id, req.body.name, req.body.price, req.body.isActive)
+        )
+    }
+    res.send(tooted)
+});
 
 router.patch("/hind-dollaritesse/:kurss", (req: Request, res: Response) => {
     if (/^[0-9]+$/.test(req.params.kurss)) {
-        tooted.forEach(toode => {
-            toode.price = toode.price * Number(req.params.kurss);
-        });
-        res.send(tooted);
+        for (let index = 0; index < tooted.length; index++) {
+            tooted[index].price = tooted[index].price * Number(req.params.kurss);
+        }
+    }
+    res.send(tooted)
+});
 
+router.delete("/kustuta-koik-tooted", (req: Request, res: Response) => {
+    tooted.splice(0, tooted.length);
+    res.send("Kõik tooted kustutatud!");
+});
+
+router.patch("/muuda-toodete-aktiivsus-valeks", (req: Request, res: Response) => {
+    for (let index = 0; index < tooted.length; index++) {
+        tooted[index].isActive = false;
+    }
+    res.send(tooted)
+});
+
+router.get("/toode/:index", (req: Request, res: Response) => {
+    res.send(tooted[Number(req.params.index)]);
+});
+
+router.get("/korgeim-hind", (req: Request, res: Response) => {
+    let maxPrice = 0;
+    let maxPriceProduct: Toode | undefined;
+    for (let i = 0; i < tooted.length; i++) {
+        if (tooted[i].price > maxPrice) {
+            maxPrice = tooted[i].price;
+            maxPriceProduct = tooted[i];
+        }
+    }
+    if (maxPriceProduct) {
+        res.send(maxPriceProduct);
     } else {
-        res.status(400).json({error: "Invalid index"})
-}
+        res.status(404).send("Tooteid ei leitud");
+    }
 });
 
 export default router;

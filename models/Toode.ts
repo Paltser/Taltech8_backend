@@ -1,20 +1,19 @@
 export class Toode {
     constructor(
-        private _id: number,
-        private _name: string,
+        public id: number,
+        public name: string,
         public price: number,
         public isActive: boolean
     ) {}
+}
 
-    get id() {
-        return this._id;
-    }
+export class Kasutaja {
+    constructor(
+        private _id: number,
+        public kasutajanimi: string,
+        private _parool: string,
+        public eesnimi: string,
+        public perenimi: string
+    ) {}
 
-    get name() {
-        return this._name;
-    }
-
-    set name(newName: string) {
-        this._name = newName;
-    }
 }

@@ -1,6 +1,5 @@
 import { Request, Response, Router } from "express";
-import {Toode} from "../models/Toode";
-
+import { Toode } from "../models/Toode";
 
 const router: Router = Router();
 
@@ -27,18 +26,19 @@ router.get("/suurenda-hinda", (req: Request, res: Response) =>  {
     res.send(toode);
 });
 
-router.get("/muuda-aktiivsust", (req: Request, res: Response) =>  {
+router.get("/muuda-aktiivsus", (req: Request, res: Response) => {
     if (toode !== null) {
         toode.isActive = !toode.isActive;
+        res.send(toode);
+    } else {
+        res.status(404).send("Toode ei ole leitud.");
     }
-    res.send(toode);
 });
 
-router.get("/muuda-nime/:uusnimi", (req: Request, res: Response) =>  {
+router.get("/muuda-nimi/:uusNimi", (req: Request, res: Response) => {
     if (toode !== null) {
-        toode.name = req.params.uusnimi;
+        toode.name = req.params.uusNimi;
     }
     res.send(toode);
 });
-
 export default router;
